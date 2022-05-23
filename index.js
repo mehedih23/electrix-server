@@ -1,4 +1,5 @@
 const express = require('express')
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const app = express()
 const port = process.env.PORT || 1111
@@ -26,10 +27,14 @@ async function run() {
     try {
         await client.connect();
         console.log('database connected')
+
+
+
         const toolCollection = client.db("electrix").collection("tools");
         const orderCollection = client.db("electrix").collection("orders");
         const paymentCollection = client.db("electrix").collection("payments");
         const reviewCollection = client.db("electrix").collection("reviews");
+        const userCollection = client.db("electrix").collection("users");
 
 
         //-------------------- PAYMENT ------------------------//
@@ -126,6 +131,18 @@ async function run() {
 
         // ------------------- ALL PUT API ------------------- //
 
+        // User //
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = { $set: user };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+
+            const token = jwt.sign({ email: email }, process.env.JSONWEBTOKEN, { expiresIn: '1d' });
+            res.send({ result, token })
+        })
 
 
 
