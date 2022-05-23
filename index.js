@@ -28,6 +28,7 @@ async function run() {
         console.log('database connected')
         const toolCollection = client.db("electrix").collection("tools");
         const orderCollection = client.db("electrix").collection("orders");
+        const paymentCollection = client.db("electrix").collection("payments");
 
 
         //-------------------- PAYMENT ------------------------//
@@ -127,7 +128,20 @@ async function run() {
 
 
         // ------------------- ALL PATCH API ------------------- //
-
+        app.patch('/order/:id', async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            }
+            const result = await paymentCollection.insertOne(payment);
+            const updateOrder = await orderCollection.updateOne(filter, updatedDoc)
+            res.send(updatedDoc);
+        })
 
 
 
