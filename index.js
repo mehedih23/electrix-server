@@ -27,11 +27,17 @@ async function run() {
     try {
         await client.connect();
         console.log('database connected')
-        const toolsCollection = client.db("electrix").collection("tools");
+        const toolCollection = client.db("electrix").collection("tools");
+        const orderCollection = client.db("electrix").collection("orders");
 
 
         // ------------------- ALL POST API ------------------- //
-
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            console.log(order)
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
 
 
 
@@ -51,14 +57,14 @@ async function run() {
 
         // Tools //
         app.get('/tools', async (req, res) => {
-            const result = await toolsCollection.find().toArray();
+            const result = await toolCollection.find().toArray();
             res.send(result);
         })
 
         app.get('/tool/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const result = await toolsCollection.findOne(query);
+            const result = await toolCollection.findOne(query);
             res.send(result);
         })
 
