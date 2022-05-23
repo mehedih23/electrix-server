@@ -59,8 +59,8 @@ async function run() {
 
         // review //
         app.post('/review', async (req, res) => {
-            const order = req.body;
-            const result = await reviewCollection.insertOne(order);
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
             res.send(result);
         })
 
@@ -107,6 +107,11 @@ async function run() {
             res.send(result);
         })
 
+        // review //
+        app.get('/review', async (req, res) => {
+            const result = await reviewCollection.find().toArray();
+            res.send(result);
+        })
 
 
 
