@@ -29,6 +29,7 @@ async function run() {
         const toolCollection = client.db("electrix").collection("tools");
         const orderCollection = client.db("electrix").collection("orders");
         const paymentCollection = client.db("electrix").collection("payments");
+        const reviewCollection = client.db("electrix").collection("reviews");
 
 
         //-------------------- PAYMENT ------------------------//
@@ -56,7 +57,12 @@ async function run() {
             res.send(result);
         })
 
-
+        // review //
+        app.post('/review', async (req, res) => {
+            const order = req.body;
+            const result = await reviewCollection.insertOne(order);
+            res.send(result);
+        })
 
 
 
