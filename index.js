@@ -112,6 +112,11 @@ async function run() {
 
 
         // Order //
+        app.get('/orders', verifyJWT, async (req, res) => {
+            const result = await orderCollection.find().toArray();
+            res.send(result);
+        })
+
         app.get('/order', verifyJWT, async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
@@ -214,14 +219,30 @@ async function run() {
             const updatedDoc = {
                 $set: {
                     paid: true,
+                    status: 'pending',
                     transactionId: payment.transactionId
                 }
             }
             const result = await paymentCollection.insertOne(payment);
             const updateOrder = await orderCollection.updateOne(filter, updatedDoc)
             res.send(updatedDoc);
+        });
+
+        app.patch('/manage/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const info = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    status: info.status
+                }
+            }
+            const result = await orderCollection.updateOne(filter, updatedDoc)
+            res.send(result)
         })
 
+
+        // User //
         app.patch('/user/:id', async (req, res) => {
             const id = req.params.id;
             const user = req.body;
