@@ -132,6 +132,13 @@ async function run() {
             res.send(result);
         })
 
+        // user //
+        app.get('/user', async (req, res) => {
+            const email = req.query.email
+            const query = { email: email };
+            const result = await userCollection.findOne(query);
+            res.send(result);
+        })
 
 
 
@@ -165,13 +172,13 @@ async function run() {
 
 
 
-
-
         // ------------------- ALL PUT API END ------------------- //
 
 
 
         // ------------------- ALL PATCH API  START ------------------- //
+
+        // Order //
         app.patch('/order/:id', async (req, res) => {
             const id = req.params.id;
             const payment = req.body;
@@ -187,7 +194,14 @@ async function run() {
             res.send(updatedDoc);
         })
 
-
+        app.patch('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const user = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = { $set: user }
+            const result = await userCollection.updateOne(filter, updatedDoc)
+            res.send(result);
+        })
 
 
 
