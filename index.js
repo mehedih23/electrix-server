@@ -31,7 +31,6 @@ function verifyJWT(req, res, next) {
         req.decoded = decoded;
         next();
     });
-
 }
 
 
@@ -53,7 +52,7 @@ async function run() {
 
 
         //-------------------- PAYMENT START ------------------------//
-        app.post("/create-payment-intent", async (req, res) => {
+        app.post("/create-payment-intent", verifyJWT, async (req, res) => {
             const service = req.body;
             const price = service.price;
             const amount = parseFloat(price) * 100;
@@ -71,14 +70,14 @@ async function run() {
         // ------------------- ALL POST API START ------------------- //
 
         // order //
-        app.post('/order', async (req, res) => {
+        app.post('/order', verifyJWT, async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
 
         // review //
-        app.post('/review', async (req, res) => {
+        app.post('/review', verifyJWT, async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
             res.send(result);
@@ -104,7 +103,7 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/tool/:id', async (req, res) => {
+        app.get('/tool/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await toolCollection.findOne(query);
@@ -113,14 +112,14 @@ async function run() {
 
 
         // Order //
-        app.get('/order', async (req, res) => {
+        app.get('/order', verifyJWT, async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
             const result = await orderCollection.find(query).toArray();
             res.send(result);
         })
 
-        app.get('/order/:id', async (req, res) => {
+        app.get('/order/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.findOne(query);
@@ -200,7 +199,7 @@ async function run() {
 
         // ------------------- ALL DELETE API START ------------------- //
         // Order //
-        app.delete('/order/:id', async (req, res) => {
+        app.delete('/order/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
