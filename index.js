@@ -289,6 +289,13 @@ async function run() {
             res.send(result);
         })
 
+        // Tools //
+        app.delete('/tool/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await toolCollection.deleteOne(query);
+            res.send(result);
+        })
 
 
         // ------------------- ALL DELETE API END ------------------- //
